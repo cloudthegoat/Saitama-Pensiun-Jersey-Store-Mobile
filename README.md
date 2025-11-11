@@ -151,3 +151,100 @@ Widget build(BuildContext context) {
   - *Hot restart*: mengubah nilai awal yang ditetapkan di `initState()`, mengubah struktur objek global/singleton, atau setelah menambah dependensi yang memengaruhi *startup* aplikasi.
 
 **Ringkasnya:** *Hot reload* = cepat dan mempertahankan state untuk iterasi UI; *Hot restart* = mulai dari nol, menghapus state, cocok saat perubahan struktural/inisialisasi perlu diterapkan ulang.
+
+# Jawaban Pertanyaan Tugas Individu 8
+
+## 1) Perbedaan `Navigator.push()` vs `Navigator.pushReplacement()` dan kapan memakainya
+
+### Perbedaan inti
+- **`Navigator.push()`** menambahkan halaman baru di atas *stack*. Tombol **Back** akan kembali ke halaman sebelumnya.
+- **`Navigator.pushReplacement()`** mengganti halaman saat ini dengan halaman baru. Tombol **Back** tidak kembali ke halaman yang diganti, tetapi ke halaman sebelum itu (jika ada).
+
+### Kapan masing-masing sebaiknya saya pakai di *Saitama Pensiun Jersey Store*?
+- Menggunakan **`push()`** untuk alur detail yang wajar kembali ke asal.
+  - Contoh: dari **Katalog** ke **Detail Jersey**.
+    ```dart
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ProductDetailPage(product: jersey),
+      ),
+    );
+    ```
+- Menggunakan **`pushReplacement()`** untuk alur satu-arah atau *top-level navigation* agar tidak menumpuk banyak halaman sejenis.
+  - Contoh: setelah **login/registrasi sukses** menuju **Home** agar tidak bisa kembali ke layar login.
+    ```dart
+    Navigator.pushReplacementNamed(context, '/home');
+    ```
+  - Contoh: navigasi dari **Drawer** ke tujuan utama (Home/Katalog/Keranjang/Profil) supaya Back tidak berkeliling ke semua halaman *top-level* yang pernah dibuka.
+    ```dart
+    // Di onTap drawer item
+    Navigator.pop(context); // tutup drawer
+    Navigator.pushReplacementNamed(context, '/cart');
+    ```
+
+## 2) Memanfaatkan `Scaffold`, `AppBar`, dan `Drawer` untuk struktur halaman yang konsisten (sesuai proyek ini)
+
+Di proyek Saitama Pensiun Jersey Store saya, konsistensi struktur halaman dicapai dengan pola yang sama pada setiap halaman top-level: `Scaffold` + `AppBar` + `Drawer` yang dibagikan.
+
+- Halaman top-level menggunakan `Scaffold` dengan `drawer: LeftDrawer()` sehingga menu samping dan header selalu sama di seluruh halaman.
+  - Implementasi: `MyHomePage` di `lib/screens/menu.dart` dan `ProductFormPage` di `lib/screens/product_form.dart` sama-sama memasang `LeftDrawer`.
+- `AppBar` konsisten hadir di setiap halaman sebagai bilah atas:
+  - `MyHomePage` menampilkan judul “Saitama Pensiun Jersey Store” dengan teks putih, dan `backgroundColor` mengikuti tema melalui `Theme.of(context).colorScheme.primary`.
+  - `ProductFormPage` menampilkan judul “Add Product Form” dengan `backgroundColor: Colors.indigo` dan `foregroundColor: Colors.white`.
+- `LeftDrawer` didefinisikan sekali di `lib/widgets/left_drawer.dart` dan dipakai ulang di semua halaman:
+  - Memiliki `DrawerHeader` berisi nama toko + tagline dengan latar `Colors.blue`.
+  - Berisi item navigasi `ListTile` (Home, Add Product, See Product). Masing-masing menavigasi menggunakan `Navigator.pushReplacement(...)` agar perpindahan antar halaman top-level tidak menumpuk stack.
+
+
+## 3) Kelebihan `Padding`, `SingleChildScrollView`, dan `ListView` pada form + contoh
+
+**Kelebihan layout widget pada form:**
+- **`Padding`**: menjaga jarak antar elemen agar rapi, mudah di-*scan*, dan nyaman untuk tap.
+- **`SingleChildScrollView`**: mencegah overflow saat keyboard muncul pada form yang relatif pendek; konten bisa digulir tanpa error.
+- **`ListView`**: cocok untuk form panjang/dinamis (banyak field) karena mendukung pengguliran native dan pengelolaan performa lebih baik.
+
+**Contoh penggunaan dalam aplikasi saya:**
+- `Padding`
+  - `lib/screens/menu.dart:37` membungkus seluruh `body` halaman Home agar konten tidak mepet tepi.
+  - `lib/screens/menu.dart:63` memberi jarak pada teks sambutan (atas 16 px).
+  - `lib/screens/product_form.dart:49` (dan beberapa bagian berikutnya) membungkus setiap `TextFormField` agar antar-field rapi dan konsisten.
+  - `lib/widgets/left_drawer.dart:28` memberi jarak di dalam `DrawerHeader` agar judul dan tagline nyaman dibaca.
+- `SingleChildScrollView`
+  - `lib/screens/product_form.dart:44` membungkus kolom form supaya layar kecil/tampil keyboard tidak menimbulkan overflow.
+  - `lib/screens/product_form.dart:224` dipakai di dalam `AlertDialog.content` agar isi dialog tetap bisa digulir saat teksnya panjang.
+- `ListView`
+  - `lib/widgets/left_drawer.dart:11` untuk menyusun item menu pada `Drawer` sehingga daftar bisa digulir saat tinggi layar terbatas.
+
+
+## 4) Menyesuaikan Tema Agar Konsisten dengan Brand Toko
+
+Untuk menyesuaikan warna tema agar aplikasi Football Shop saya memiliki identitas visual yang konsisten dengan brand toko (website Saitama Pensiun Jersey Store), ada beberapa hal yang akan saya lakukan nantinya, beberapa di antaranya adalah sebagai berikut.
+
+- Menetapkan palet brand yang jelas.
+  - Warna utama: hitam untuk elemen struktur dan navigasi.
+  - Warna kedua: oranye untuk aksen, aksi utama, dan penanda status positif/aktif.
+  - Memastikan warna kontras teks/ikon di atas keduanya memadai.
+
+- Mengatur tema global aplikasi agar seluruh komponen mewarisi skema warna yang sama.
+  - Menggunakan skema warna Material modern sehingga turunan warna (surface, background, outline, dsb.) tetap harmonis.
+  - Menghindari menetapkan warna secara acak di masing-masing widget. Dengan kata lain, merujuk ke warna tema agar konsisten.
+
+- Menerapkan konsistensi komponen utama.
+  - App bar: latar hitam dengan teks/ikon kontras yang konsisten di semua halaman.
+  - Navigasi: menggunakan oranye sebagai penanda item aktif atau badge/indikator notifikasi.
+  - Tombol: menggunakan oranye untuk aksi utama (misalnya beli/checkout) dan menggunakan varian yang kontras untuk aksi sekunder.
+  - Floating action button dan elemen interaktif lain: menggunakan oranye agar menonjol, tapi tetap selaras.
+  - Input/form: Memastikan fokus/aktif dan elemen bantu (label, border, ikon) memanfaatkan warna sekunder untuk penekanan yang halus.
+
+- Menyesuaikan elemen pendukung.
+  - Drawer dan header: menggunakan latar hitam dengan tipografi putih yang tegas; menggunakan oranye untuk ikon/indikator pilihan.
+  - Kartu dan permukaan (surface): menjaga keterbacaan di atas latar gelap; menggunakan bayangan dan kontras yang cukup.
+
+- Menyiapkan varian mode gelap/terang tanpa mengubah identitas.
+  - Mempertahankan hitam sebagai jangkar visual dan oranye sebagai aksen; sesuaikan tingkat kecerahan agar tetap nyaman dilihat.
+  - Memperhatikan aksesibilitas (rasio kontras) di kedua mode.
+
+- Standarisasi dan pemeliharaan.
+  - Mengelompokkan definisi warna brand di satu tempat agar mudah dirawat dan dipakai ulang.
+  - Menguji konsistensi di seluruh layar (home, form produk, daftar, detail) dan memperbaiki bila ada komponen yang masih memakai warna “hard-coded”.
