@@ -10,10 +10,10 @@ class MyHomePage extends StatelessWidget {
   final String kelas = "C"; //kelas
 
   final List<ItemHomepage> items = [
-    ItemHomepage("All Products", Icons.inventory_2_outlined, Colors.blue),
-    ItemHomepage("My Products", Icons.inventory_2, Colors.green),
-    ItemHomepage("Create Product", Icons.add, Colors.red),
-    ItemHomepage("Logout", Icons.logout, Colors.grey),
+    const ItemHomepage("All Products", Icons.inventory_2_outlined, Color(0xFFFF6A00)),
+    const ItemHomepage("My Products", Icons.inventory_2, Color(0xFF1E90FF)),
+    const ItemHomepage("Create Product", Icons.add, Color(0xFFFF8B45)),
+    const ItemHomepage("Logout", Icons.logout, Color(0xFF2D2D2D)),
   ];
 
   @override
@@ -22,16 +22,19 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       // AppBar adalah bagian atas halaman yang menampilkan judul.
       appBar: AppBar(
-        // Judul aplikasi "Saitama Pensiun Jersey Store" dengan teks putih dan tebal.
-        title: const Text(
-          'Saitama Pensiun Jersey Store',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        title: const Text('Saitama Pensiun Jersey Store'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary.withOpacity(0.18),
+                Colors.transparent,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
         ),
-        // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
-        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       drawer: LeftDrawer(),
       // Body halaman dengan padding di sekelilingnya.
@@ -43,8 +46,10 @@ class MyHomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Row untuk menampilkan 3 InfoCard secara horizontal.
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                alignment: WrapAlignment.spaceEvenly,
                 children: [
                   InfoCard(title: 'NPM', content: npm),
                   InfoCard(title: 'Name', content: nama),
@@ -56,14 +61,14 @@ class MyHomePage extends StatelessWidget {
               const SizedBox(height: 16.0),
 
               // Menampilkan teks sambutan dengan gaya tebal dan ukuran 18.
-              const Padding(
-                padding: EdgeInsets.only(top: 16.0),
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
                 child: Text(
                   'Selamat datang di Saitama Pensiun Jersey Store',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.4,
+                      ),
                 ),
               ),
 
@@ -98,24 +103,51 @@ class InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      // Membuat kotak kartu dengan bayangan dibawahnya.
-      elevation: 2.0,
-      child: Container(
-        // Mengatur ukuran dan jarak di dalam kartu.
-        width: MediaQuery.of(context).size.width / 3.5, // menyesuaikan dengan lebar device yang digunakan.
-        padding: const EdgeInsets.all(16.0),
-        // Menyusun title dan content secara vertikal.
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            Text(content),
+    final width = MediaQuery.of(context).size.width;
+    final cardWidth = width > 720 ? width / 3.5 : width;
+    final theme = Theme.of(context);
+
+    return Container(
+      width: cardWidth,
+      padding: const EdgeInsets.all(18.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.surface.withOpacity(0.95),
+            theme.colorScheme.surface.withOpacity(0.8),
           ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.35),
+            blurRadius: 18,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.primary,
+              letterSpacing: 1.2,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            content,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }

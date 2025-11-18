@@ -13,39 +13,88 @@ class LeftDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final theme = Theme.of(context);
+    final accent = theme.colorScheme.primary;
+
     return Drawer(
-      child: ListView(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              theme.colorScheme.surface,
+              theme.colorScheme.background,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: ListView(
         children: [
-          const DrawerHeader(
+          SizedBox(
+            height: 210,
+            child: DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              gradient: LinearGradient(
+                colors: [
+                  accent.withOpacity(0.25),
+                  Colors.transparent,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: accent,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accent.withOpacity(0.35),
+                        blurRadius: 24,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: const Text(
+                    'Saitama',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Text(
                   'Saitama Pensiun Jersey Store',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
                   ),
                 ),
-                Padding(padding: EdgeInsets.all(10)),
-                Text(
-                  "Tempat Mencari Jersey Terbaik",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.white,
-                    fontWeight: FontWeight.normal,
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Tempat Mencari Jersey Terbaik",
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.white70,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+          ),
           ListTile(
-            leading: const Icon(Icons.home_outlined),
+            leading: Icon(Icons.home_outlined, color: accent),
             title: const Text('Home'),
             // Bagian redirection ke MyHomePage
             onTap: () {
@@ -57,7 +106,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.post_add),
+            leading: Icon(Icons.post_add, color: accent),
             title: const Text('Add Product'),
             // Bagian redirection ke ProductFormPage
             onTap: () {
@@ -70,7 +119,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.list_alt),
+            leading: Icon(Icons.list_alt, color: accent),
             title: const Text('All Products'),
             onTap: () {
               Navigator.pushReplacement(
@@ -81,7 +130,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.inventory_2),
+            leading: Icon(Icons.inventory_2, color: theme.colorScheme.secondary),
             title: const Text('My Products'),
             onTap: () {
               Navigator.pushReplacement(
@@ -124,7 +173,8 @@ class LeftDrawer extends StatelessWidget {
               }
             },
           ),
-      ],
+        ],
+      ),
       ),
     );
   }

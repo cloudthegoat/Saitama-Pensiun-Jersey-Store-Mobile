@@ -15,11 +15,24 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = theme.colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Detail'),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                accent.withOpacity(0.25),
+                Colors.transparent,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -34,7 +47,7 @@ class ProductDetailPage extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
                   height: 250,
-                  color: Colors.grey[300],
+                  color: Colors.white12,
                   child: const Center(
                     child: Icon(Icons.broken_image, size: 50),
                   ),
@@ -53,12 +66,18 @@ class ProductDetailPage extends StatelessWidget {
                           horizontal: 12.0, vertical: 6.0),
                       margin: const EdgeInsets.only(bottom: 12.0),
                       decoration: BoxDecoration(
-                        color: Colors.amber,
                         borderRadius: BorderRadius.circular(20.0),
+                        gradient: LinearGradient(
+                          colors: [
+                            accent,
+                            const Color(0xFFFF8B45),
+                          ],
+                        ),
                       ),
                       child: const Text(
                         'Featured',
                         style: TextStyle(
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -78,10 +97,10 @@ class ProductDetailPage extends StatelessWidget {
                   // Price
                   Text(
                     'Price: Rp ${product.fields.price}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.w600,
-                      color: Colors.green,
+                      color: accent,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -93,15 +112,18 @@ class ProductDetailPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10.0, vertical: 4.0),
                         decoration: BoxDecoration(
-                          color: Colors.indigo.shade100,
+                          color: accent.withOpacity(0.18),
                           borderRadius: BorderRadius.circular(12.0),
+                          border: Border.all(
+                            color: accent.withOpacity(0.4),
+                          ),
                         ),
                         child: Text(
                           product.fields.category.toUpperCase(),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.indigo.shade700,
+                            color: accent,
                           ),
                         ),
                       ),
@@ -110,7 +132,7 @@ class ProductDetailPage extends StatelessWidget {
                         _formatDate(product.fields.createdAt),
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: Colors.white70,
                         ),
                       ),
                     ],

@@ -148,9 +148,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      minimumSize: Size(double.infinity, 50),
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       backgroundColor: Theme.of(context).colorScheme.primary,
+                      minimumSize: const Size(double.infinity, 50),
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                     ),
                     child: const Text('Register'),

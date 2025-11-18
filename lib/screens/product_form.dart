@@ -33,15 +33,22 @@ class _ProductFormPageState extends State<ProductFormPage> {
     @override
     Widget build(BuildContext context) {
         final request = context.watch<CookieRequest>();
+        final theme = Theme.of(context);
         return Scaffold(
           appBar: AppBar(
-            title: const Center(
-              child: Text(
-                'Add Product Form',
+            title: const Text('Add Product Form'),
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary.withOpacity(0.25),
+                    Colors.transparent,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
             ),
-            backgroundColor: Colors.indigo,
-            foregroundColor: Colors.white,
           ),
           drawer: LeftDrawer(),
           body: Form(
@@ -215,9 +222,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.indigo),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
                         ),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
