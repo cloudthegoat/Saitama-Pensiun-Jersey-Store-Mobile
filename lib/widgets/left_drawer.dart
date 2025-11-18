@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:saitamapensiunjerseystore/screens/login.dart';
 import 'package:saitamapensiunjerseystore/screens/menu.dart';
+import 'package:saitamapensiunjerseystore/screens/my_product_entry_list.dart';
+import 'package:saitamapensiunjerseystore/screens/product_entry_list.dart';
 import 'package:saitamapensiunjerseystore/screens/product_form.dart';
 
 class LeftDrawer extends StatelessWidget {
@@ -7,6 +12,7 @@ class LeftDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Drawer(
       child: ListView(
         children: [
@@ -65,17 +71,60 @@ class LeftDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.list_alt),
-            title: const Text('See Product'),
+            title: const Text('All Products'),
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProductEntryListPage(),
+                  ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.inventory_2),
+            title: const Text('My Products'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MyHomePage(),
+                  builder: (context) => const MyProductEntryListPage(),
                 ),
               );
             },
           ),
-        ],
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () async {
+              final response =
+                  await request.logout("http://localhost:8000/auth/logout/");
+              final message = response["message"];
+
+              if (!context.mounted) return;
+
+              if (response['status']) {
+                final uname = response["username"];
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("$message See you again, $uname."),
+                  ),
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginPage(),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                  ),
+                );
+              }
+            },
+          ),
+      ],
       ),
     );
   }
